@@ -1,5 +1,6 @@
 package org.example.jiranewsletterapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class SubscriberListEntry {
 
     @ManyToOne
     @JoinColumn(name = "subscriber_list_id")
+    @JsonIgnore
     private SubscriberList list;
 
     @ManyToOne

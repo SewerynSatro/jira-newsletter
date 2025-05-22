@@ -1,5 +1,6 @@
 package org.example.jiranewsletterapp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,5 +38,6 @@ public class Subscriber {
     private LocalDateTime joinDate = LocalDateTime.now();
 
     @OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<SubscriberListEntry> entries = new ArrayList<>();
 }
