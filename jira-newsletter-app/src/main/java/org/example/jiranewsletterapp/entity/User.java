@@ -27,11 +27,15 @@ public class User {
 
     private String lastName;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender = Gender.UNKNOWN;
+
     @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.USER;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SubscriberList> subscriberLists = new ArrayList<>();

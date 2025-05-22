@@ -29,6 +29,10 @@ public class Subscriber {
 
     private LocalDate birthDate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender = Gender.UNKNOWN;
+
     @Column(nullable = false)
     private LocalDateTime joinDate = LocalDateTime.now();
 
