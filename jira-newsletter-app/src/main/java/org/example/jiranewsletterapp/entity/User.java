@@ -5,33 +5,34 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import org.example.jiranewsletterapp.entity.Role;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="user_app")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Subscriber {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     private String firstName;
 
     private String lastName;
 
-    private LocalDate birthDate;
-
     @Column(nullable = false)
-    private LocalDateTime joinDate = LocalDateTime.now();
+    private String password;
 
-    @OneToMany(mappedBy = "subscriber", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<SubscriberListEntry> entries = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<SubscriberList> subscriberLists = new ArrayList<>();
 }
