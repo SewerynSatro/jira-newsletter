@@ -1,9 +1,7 @@
 package org.example.jiranewsletterapp.controller;
 
 import org.example.jiranewsletterapp.entity.SubscriberList;
-import org.example.jiranewsletterapp.entity.User;
-import org.example.jiranewsletterapp.repository.SubscriberListRepository;
-import org.example.jiranewsletterapp.repository.UserRepository;
+import org.example.jiranewsletterapp.service.SubscriberListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,42 +11,35 @@ import java.util.List;
 @RequestMapping("/subscriber-lists")
 public class SubscriberListController {
 
-    private final SubscriberListRepository listRepository;
-    private final UserRepository userRepository;
+    private final SubscriberListService listService;
 
     @Autowired
-    public SubscriberListController(SubscriberListRepository listRepository, UserRepository userRepository) {
-        this.listRepository = listRepository;
-        this.userRepository = userRepository;
+    public SubscriberListController(SubscriberListService listService) {
+        this.listService = listService;
     }
 
     @GetMapping
     public List<SubscriberList> getAll() {
-        return listRepository.findAll();
+        return listService.getAllLists();
+    }
+
+    @GetMapping("/{id}")
+    public SubscriberList getById(@PathVariable Long id) {
+        return listService.getById(id);
     }
 
     @PostMapping
     public SubscriberList create(@RequestBody SubscriberList list) {
-        if (list.getOwner() == null || list.getOwner().getId() == null) {
-            throw new RuntimeException("Owner must be provided with a valid ID.");
-        }
-
-        Long ownerId = list.getOwner().getId();
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + ownerId));
-
-        list.setOwner(owner);
-        return listRepository.save(list);
+        return listService.createList(list);
     }
 
     @PutMapping("/{id}")
     public SubscriberList update(@PathVariable Long id, @RequestBody SubscriberList updated) {
-        updated.setId(id);
-        return listRepository.save(updated);
+        return listService.updateList(id, updated);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        listRepository.deleteById(id);
+        listService.deleteList(id);
     }
 }
