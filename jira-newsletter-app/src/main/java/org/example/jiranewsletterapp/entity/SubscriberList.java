@@ -1,6 +1,6 @@
 package org.example.jiranewsletterapp.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class SubscriberList {
 
     @ManyToOne
     @JoinColumn(name = "owner_id", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private User owner;
 
     @OneToMany(mappedBy = "list", cascade = CascadeType.ALL, orphanRemoval = true)
