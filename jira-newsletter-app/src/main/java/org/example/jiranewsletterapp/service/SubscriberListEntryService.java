@@ -1,8 +1,12 @@
 package org.example.jiranewsletterapp.service;
 
+import org.example.jiranewsletterapp.entity.Subscriber;
+import org.example.jiranewsletterapp.entity.SubscriberList;
 import org.example.jiranewsletterapp.entity.SubscriberListEntry;
 import org.example.jiranewsletterapp.entity.User;
 import org.example.jiranewsletterapp.repository.SubscriberListEntryRepository;
+import org.example.jiranewsletterapp.repository.SubscriberListRepository;
+import org.example.jiranewsletterapp.repository.SubscriberRepository;
 import org.example.jiranewsletterapp.repository.UserRepository;
 import org.example.jiranewsletterapp.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +22,20 @@ public class SubscriberListEntryService {
 
     private final SubscriberListEntryRepository entryRepository;
     private final UserRepository userRepository;
+    private final SubscriberListRepository listRepository;
+    private final SubscriberRepository subscriberRepository;
 
     @Autowired
-    public SubscriberListEntryService(SubscriberListEntryRepository entryRepository, UserRepository userRepository) {
+    public SubscriberListEntryService(
+            SubscriberListEntryRepository entryRepository,
+            UserRepository userRepository,
+            SubscriberListRepository listRepository,
+            SubscriberRepository subscriberRepository
+    ) {
         this.entryRepository = entryRepository;
         this.userRepository = userRepository;
+        this.listRepository = listRepository;
+        this.subscriberRepository = subscriberRepository;
     }
 
     public List<SubscriberListEntry> getAllEntries() {
@@ -76,4 +89,44 @@ public class SubscriberListEntryService {
         entryRepository.delete(entry);
     }
 
+    @Transactional
+    public SubscriberListEntry assignSubscriberToListAsAdmin(Long listId, Long subscriberId) {
+        SubscriberList targetList = listRepository.findById(listId)
+                .orElseThrow(() -> new RuntimeException("List not found"));
+
+        Subscriber subscriber = subscriberRepository.findById(subscriberId)
+                .orElseThrow(() -> new RuntimeException("Subscriber not found"));
+
+        SubscriberListEntry newEntry = new SubscriberListEntry();
+        newEntry.setList(targetList);
+        newEntry.setSubscriber(subscriber);
+        return entryRepository.save(newEntry);
+    }
+
+    @Transactional
+    public SubscriberListEntry assignSubscriberToMyList(Long listId, Long subscriberId) {
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long currentUserId = principal.getUser().getId();
+
+        SubscriberList targetList = listRepository.findById(listId)
+                .filter(list -> list.getOwner().getId().equals(currentUserId))
+                .orElseThrow(() -> new RuntimeException("List not found or not owned by current user"));
+
+        boolean subscriberExistsInUserLists = listRepository.findAll().stream()
+                .filter(list -> list.getOwner().getId().equals(currentUserId))
+                .flatMap(list -> list.getEntries().stream())
+                .anyMatch(entry -> entry.getSubscriber().getId().equals(subscriberId));
+
+        if (!subscriberExistsInUserLists) {
+            throw new RuntimeException("Subscriber not found on any of your lists");
+        }
+
+        Subscriber subscriber = subscriberRepository.findById(subscriberId)
+                .orElseThrow(() -> new RuntimeException("Subscriber not found"));
+
+        SubscriberListEntry newEntry = new SubscriberListEntry();
+        newEntry.setList(targetList);
+        newEntry.setSubscriber(subscriber);
+        return entryRepository.save(newEntry);
+    }
 }

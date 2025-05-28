@@ -49,6 +49,12 @@ public class SubscriberListEntryController {
         return entryService.getById(id);
     }
 
+    @PostMapping("/assign")
+    @Operation(summary = "Przypisanie subskrybenta do listy po ID", tags = {"Lists entries - Admin API"})
+    public SubscriberListEntry assignSubscriberToListAsAdmin(@RequestParam Long listId, @RequestParam Long subscriberId) {
+        return entryService.assignSubscriberToListAsAdmin(listId, subscriberId);
+    }
+
     @Operation(summary = "Wszystkie listy", tags = {"Lists entries - User API"})
     @GetMapping("/my")
     public List<SubscriberListEntry> getMyEntries() {
@@ -61,4 +67,9 @@ public class SubscriberListEntryController {
         entryService.deleteEntryForCurrentUser(id);
     }
 
+    @Operation(summary = "Zapis na liste po ID", tags = {"Lists entries - User API"})
+    @PostMapping("/my/assign")
+    public SubscriberListEntry assignSubscriber(@RequestParam Long listId, @RequestParam Long subscriberId) {
+        return entryService.assignSubscriberToMyList(listId, subscriberId);
+    }
 }
