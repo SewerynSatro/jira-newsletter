@@ -47,7 +47,8 @@ public class SecurityConfig {
                         .requestMatchers("/subscribers/**").hasAuthority("ADMIN")
                         .requestMatchers("/subscriber-lists/**").hasAuthority("ADMIN")
                         .requestMatchers("/subscriber-lists/my/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/subscriber-entries/**").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers("/subscriber-entries/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/subscriber-entries/my/**").hasAnyAuthority("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
