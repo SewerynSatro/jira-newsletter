@@ -1,5 +1,6 @@
 package org.example.jiranewsletterapp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.example.jiranewsletterapp.entity.User;
 import org.example.jiranewsletterapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,13 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Pobierz wszystkich userow", tags = {"Users - Admin API"})
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    @Operation(summary = "Pobierz usera po ID", tags = {"Users - Admin API"})
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
         return userService.getUserById(id)
@@ -31,11 +34,13 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @Operation(summary = "Stworz nowego usera", tags = {"Users - Admin API"})
     @PostMapping
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
+    @Operation(summary = "Zaktualizuj usera po ID", tags = {"Users - Admin API"})
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
         if (userService.getUserById(id).isEmpty()) {
@@ -44,6 +49,7 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(id, updatedUser));
     }
 
+    @Operation(summary = "Usun usera po ID", tags = {"Users - Admin API"})
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (userService.getUserById(id).isEmpty()) {

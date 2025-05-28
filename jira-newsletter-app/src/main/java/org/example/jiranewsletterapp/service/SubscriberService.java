@@ -1,9 +1,14 @@
 package org.example.jiranewsletterapp.service;
 
 import org.example.jiranewsletterapp.entity.Subscriber;
+import org.example.jiranewsletterapp.entity.User;
 import org.example.jiranewsletterapp.repository.SubscriberRepository;
+import org.example.jiranewsletterapp.repository.UserRepository;
+import org.example.jiranewsletterapp.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,10 +16,12 @@ import java.util.List;
 public class SubscriberService {
 
     private final SubscriberRepository subscriberRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public SubscriberService(SubscriberRepository subscriberRepository) {
+    public SubscriberService(SubscriberRepository subscriberRepository, UserRepository userRepository) {
         this.subscriberRepository = subscriberRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Subscriber> getAllSubscribers() {
@@ -37,5 +44,24 @@ public class SubscriberService {
 
     public void delete(Long id) {
         subscriberRepository.deleteById(id);
+    }
+
+    public void deleteByEmail(String email) {
+        Subscriber subscriber = subscriberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Subscriber not found with email: " + email));
+        subscriberRepository.delete(subscriber);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Subscriber> getMySubscribers() {
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userRepository.findById(principal.getUser().getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getSubscriberLists().stream()
+                .flatMap(list -> list.getEntries().stream())
+                .map(entry -> entry.getSubscriber())
+                .distinct()
+                .toList();
     }
 }

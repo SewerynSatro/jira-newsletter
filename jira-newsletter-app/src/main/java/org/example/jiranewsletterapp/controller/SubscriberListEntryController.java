@@ -54,4 +54,11 @@ public class SubscriberListEntryController {
     public List<SubscriberListEntry> getMyEntries() {
         return entryService.getEntriesForCurrentUser();
     }
+
+    @Operation(summary = "Usuniecie zapisu na liste po ID", tags = {"Lists entries - User API"})
+    @DeleteMapping("/my/{id}")
+    public void deleteMyEntry(@PathVariable Long id) {
+        entryService.deleteEntryForCurrentUser(id);
+    }
+
 }

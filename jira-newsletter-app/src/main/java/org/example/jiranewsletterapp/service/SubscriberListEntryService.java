@@ -60,4 +60,20 @@ public class SubscriberListEntryService {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteEntryForCurrentUser(Long id) {
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = principal.getUser().getId();
+
+        SubscriberListEntry entry = entryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Entry not found"));
+
+        if (!entry.getList().getOwner().getId().equals(userId)) {
+            throw new RuntimeException("Access denied to delete entry");
+        }
+
+        entryRepository.delete(entry);
+    }
+
 }
