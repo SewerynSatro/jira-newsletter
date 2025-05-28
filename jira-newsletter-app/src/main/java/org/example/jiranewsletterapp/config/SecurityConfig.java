@@ -1,14 +1,11 @@
 package org.example.jiranewsletterapp.config;
 
-import org.example.jiranewsletterapp.repository.UserRepository;
 import org.example.jiranewsletterapp.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationManagerResolver;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,8 +44,10 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").authenticated()
                         .requestMatchers("/api/users/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/subscribers/**", "/subscriber-entries/**", "/subscriber-lists/**").authenticated()
-                        .requestMatchers("/subscribers/**", "/subscriber-entries/**", "/subscriber-lists/**").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers("/subscribers/**").hasAuthority("ADMIN")
+                        .requestMatchers("/subscriber-lists/**").hasAuthority("ADMIN")
+                        .requestMatchers("/subscriber-lists/my/**").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers("/subscriber-entries/**").hasAnyAuthority("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
