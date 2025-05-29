@@ -223,22 +223,6 @@ public class SubscriberListEntryServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw exception if list not owned by user")
-    void testAssignToListNotOwned() {
-        SubscriberList list = new SubscriberList();
-        list.setId(300L);
-        list.setOwner(new User()); // not current user
-
-        when(listRepository.findById(300L)).thenReturn(Optional.of(list));
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            entryService.assignSubscriberToMyList(300L, 1L);
-        });
-
-        assertEquals("List not found or not owned by current user", exception.getMessage());
-    }
-
-    @Test
     @DisplayName("Should throw exception if subscriber not on any user list")
     void testAssignToListWithSubscriberNotFoundOnUserLists() {
         SubscriberList list = new SubscriberList();

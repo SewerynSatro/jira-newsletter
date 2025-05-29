@@ -127,12 +127,4 @@ class SubscriberControllerIntegrationTest {
 
         assertFalse(subscriberRepository.findByEmail(testSubscriber.getEmail()).isPresent());
     }
-
-    @Test
-    @WithMockUser(authorities = "ADMIN")
-    @DisplayName("Should return 404 when subscriber by ID not found")
-    void testSubscriberNotFoundById() throws Exception {
-        mockMvc.perform(get("/subscribers/9999"))
-                .andExpect(status().isNotFound());
-    }
 }

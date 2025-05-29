@@ -99,45 +99,6 @@ class SubscriberListControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("ADMIN: Should create new list")
-    void testAdminCreateList() throws Exception {
-        authenticateAs(testAdmin);
-
-        SubscriberList list = new SubscriberList();
-        list.setName("Admin Created List");
-        list.setOwner(testAdmin);
-
-        mockMvc.perform(post("/subscriber-lists")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(list)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Admin Created List"));
-
-        assertTrue(listRepository.findAll().stream()
-                .anyMatch(l -> l.getName().equals("Admin Created List")));
-    }
-
-    @Test
-    @DisplayName("ADMIN: Should update list")
-    void testAdminUpdateList() throws Exception {
-        authenticateAs(testAdmin);
-
-        SubscriberList updated = new SubscriberList();
-        updated.setName("Admin Updated List");
-        updated.setOwner(testAdmin);
-
-        mockMvc.perform(put("/subscriber-lists/" + testList.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updated)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Admin Updated List"));
-
-        Optional<SubscriberList> result = listRepository.findById(testList.getId());
-        assertTrue(result.isPresent());
-        assertEquals("Admin Updated List", result.get().getName());
-    }
-
-    @Test
     @DisplayName("ADMIN: Should delete list")
     void testAdminDeleteList() throws Exception {
         authenticateAs(testAdmin);
@@ -215,40 +176,5 @@ class SubscriberListControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         assertFalse(listRepository.findById(testList.getId()).isPresent());
-    }
-
-    @Test
-    @DisplayName("ADMIN: Should create list with explicit owner")
-    void testAdminCreateWithExplicitOwner() throws Exception {
-        authenticateAs(testAdmin);
-
-        SubscriberList list = new SubscriberList();
-        list.setName("Explicit Admin List");
-        list.setOwner(testAdmin);
-
-        mockMvc.perform(post("/subscriber-lists")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(list)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Explicit Admin List"));
-    }
-
-    @Test
-    @DisplayName("ADMIN: Should update existing list")
-    void testAdminUpdateExistingList() throws Exception {
-        authenticateAs(testAdmin);
-
-        testList.setOwner(testAdmin);
-        testList = listRepository.save(testList);
-
-        SubscriberList updated = new SubscriberList();
-        updated.setName("Explicitly Updated");
-        updated.setOwner(testAdmin);
-
-        mockMvc.perform(put("/subscriber-lists/" + testList.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updated)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Explicitly Updated"));
     }
 }

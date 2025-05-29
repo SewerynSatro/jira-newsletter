@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: jira-newsletter-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/newsletter_app
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: newsletter-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: newsletter_app
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

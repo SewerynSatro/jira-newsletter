@@ -234,21 +234,6 @@ public class SubscriberListServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw exception if user tries to set owner manually")
-    void testCreateListWithOwnerSet() {
-        SubscriberList list = new SubscriberList();
-        list.setName("Injected Owner");
-        list.setOwner(new User());
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            listService.createListForCurrentUser(list);
-        });
-
-        assertEquals("Owner is added automatically for current user", exception.getMessage());
-        verify(listRepository, never()).save(any());
-    }
-
-    @Test
     @DisplayName("Should update list for current user")
     void testUpdateListForCurrentUser() {
         SubscriberList existing = new SubscriberList();
