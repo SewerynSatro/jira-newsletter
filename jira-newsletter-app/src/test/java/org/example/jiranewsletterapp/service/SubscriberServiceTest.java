@@ -143,7 +143,6 @@ public class SubscriberServiceTest {
     @Test
     @DisplayName("Should return subscribers belonging to current user")
     void testGetMySubscribers() {
-        // prepare user and subscriber
         Subscriber subscriber = new Subscriber();
         subscriber.setId(1L);
         subscriber.setEmail("user@example.com");
