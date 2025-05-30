@@ -285,3 +285,5 @@ Subscribers – User API
 - Integration Tests in src/test/java/.../integration (controller tests).
 - Unit Tests in src/test/java/.../service (service layer tests).
 - Test configuration in application-test.properties.
+### Code Coverage
+![JaCoCo Code Coverage](images/jacoco_raport.png)
