@@ -6,14 +6,15 @@ A Spring Boot REST API for managing newsletter subscribers and subscriber lists,
 1. [Project Overview](#project-overview)
 2. [Technologies](#technologies)
 3. [Architecture & Project Structure](#architecture--project-structure)
-4. [Prerequisites](#prerequisites)
-5. [Installation & Running](#installation--running)
-6. [Configuration](#configuration)
-7. [Database Migrations (Flyway)](#database-migrations-flyway)
-8. [Data Seeding](#data-seeding)
-9. [API Endpoints](#api-endpoints)
-10. [Security](#security)
-11. [Testing](#testing)
+4. [Database structure](#database-structure)
+5. [Prerequisites](#prerequisites)
+6. [Installation & Running](#installation--running)
+7. [Configuration](#configuration)
+8. [Database Migrations (Flyway)](#database-migrations-flyway)
+9. [Data Seeding](#data-seeding)
+10. [API Endpoints](#api-endpoints)
+11. [Security](#security)
+12. [Testing](#testing)
 
 ## Project Overview
 This application provides a RESTful API to:
@@ -98,6 +99,46 @@ jira-newsletter-app
 ├── pom.xml
 └── README.md
 ```
+
+## Database structure
+### ERD diagram
+![Architecture diagram](images/erd_diagram.png)
+
+### Database relations
+
+### Tables
+#### user_app
+Stores application users with fields:
+  - id (PK)
+  - email
+  - first_name
+  - last_name
+  - password
+  - gender
+  - role
+#### subscriber
+Represents newsletter subscribers, containing:
+  - id (PK)
+  - email
+  - first_name
+  - last_name
+  - birth_date
+  - gender
+#### subscriber_list
+Defines named lists of subscribers. One user (owner) can have multiple subscriber lists (1‑to‑many). Each record has:
+- id
+- name
+- owner_id referencing user_app.id
+  
+#### subscriber_list_entry
+Join table linking subscriber and subscriber_list. A subscriber can appear on multiple lists, and each list can include multiple subscribers (many‑to‑many with extra columns). Contains:
+- id
+- subscriber_id
+- subscriber_list_id
+- metadata fields:
+  -  confirmed
+  -  date_added
+  -  source
 
 ## Prerequisites
 - Java JDK 21+
