@@ -39,7 +39,6 @@ This application provides a RESTful API to:
 ## Architecture & Project Structure
 ```
 jira-newsletter-app
-├── .github/                   # CI/CD workflows (optional)
 ├── src/
 │   ├── main/
 │   │   ├── java/org/example/jiranewsletterapp
